@@ -26,7 +26,43 @@ def get_country_cases():
     today=str(datetime.date.today())
     params = {'date': today}
     response = make_url_request_using_cache(COVID19API_URL, params, "covid19api")
+    result = response[result]
     return response
+
+
+def get_state_name1(state_listing_li_tr):
+    state_name_tag = state_listing_li_tr.find('td', class_=\
+    'text svelte-5vyzvh', recursive=False)
+    if not state_name_tag:
+        state_name_tag = state_listing_li_tr.find('td', class_=\
+        'text svelte-5vyzvh no-expand', recursive=False)
+    state_name = state_name_tag.text.strip()
+    name_list = re.split("[+|»]", state_name)
+    clean_state_name = None
+    for name in name_list:
+        if name and "+" in state_name:
+            clean_state_name = name.strip()
+            if "MAP" in name:
+                clean_state_name = clean_state_name[:-4]
+    return state_name_tag, clean_state_name
+
+
+def get_state_name2(state_listing_li_tr):
+    state_name_tag = state_listing_li_tr.find('td', class_=\
+    'text svelte-5vyzvh', recursive=False)
+    if not state_name_tag:
+        state_name_tag = state_listing_li_tr.find('td', class_=\
+        'text svelte-5vyzvh no-expand', recursive=False)
+    state_name = state_name_tag.text.strip()
+    name_list = re.split("[+|»]", state_name)
+    clean_state_name = None
+    for name in name_list:
+        if name:
+            clean_state_name = name.strip()
+            if "MAP" in name:
+                clean_state_name = clean_state_name[:-4]
+    return state_name_tag, clean_state_name
+
 
 def build_state_url_dict():
     ''' Make a dictionary that maps state name to state page url
@@ -53,7 +89,9 @@ def build_state_url_dict():
         ## extract every state's URL
         state_listing_li_tr = state_listing_li.find('tr', class_=\
         'svelte-5vyzvh', recursive=False)
-        state_name_tag, state_name = get_state_name(state_listing_li_tr)
+        state_name_tag, state_name = get_state_name1(state_listing_li_tr)
+        if not state_name:
+            continue
         state_link_tag = state_name_tag.find('a', class_=\
         'svelte-5vyzvh has-plus', recursive=False)
         if not state_link_tag:
@@ -63,22 +101,6 @@ def build_state_url_dict():
             state_details_url = state_link_tag['href']
             state_dict[state_name] = state_details_url
     return state_dict
-
-
-def get_state_name(state_listing_li_tr):
-    state_name_tag = state_listing_li_tr.find('td', class_=\
-    'text svelte-5vyzvh', recursive=False)
-    if not state_name_tag:
-        state_name_tag = state_listing_li_tr.find('td', class_=\
-        'text svelte-5vyzvh no-expand', recursive=False)
-    state_name = state_name_tag.text.strip()
-    name_list = re.split("[+|»]", state_name)
-    for name in name_list:
-        if name:
-            clean_state_name = name.strip()
-            if "MAP" in name and "+" in state_name:
-                clean_state_name = clean_state_name[:-4]
-    return state_name_tag, clean_state_name
 
 
 def get_state_cases():
@@ -94,7 +116,7 @@ def get_state_cases():
     for state_listing_li in state_listing_lis:
         state_listing_li_tr = state_listing_li.find('tr', class_=\
         'svelte-5vyzvh', recursive=False)
-        _, state_name = get_state_name(state_listing_li_tr)
+        _, state_name = get_state_name2(state_listing_li_tr)
         data = state_listing_li_tr.find_all('td', recursive=False)
         case_num = clean_data(data[1])
         case_per_100000_people = clean_data(data[2])
