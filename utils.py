@@ -5,3 +5,4 @@ def clean_data(data):
     elif ',' in data:
         data = data.replace(',','')
     return data
+

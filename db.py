@@ -29,6 +29,19 @@ def run_sql(query, data = None):
         conn.close()
         return
 
+
+def insert_country_Cases(country_id, country_name, Confirmed,\
+     Deaths, Recovered):
+    insert_country_Cases = '''
+        INSERT OR REPLACE INTO countryCases
+        VALUES (?, ?, ?, ?, ?)
+    '''
+    data = [country_id, country_name, Confirmed,\
+     Deaths, Recovered]
+    run_sql(insert_country_Cases, data = data)
+    return
+
+
 def insert_state_Cases(state_name, case_num, case_per_100000_people,\
      death_num, death_per_100000_people):
     insert_state_Cases = '''
@@ -43,13 +56,13 @@ def insert_state_Cases(state_name, case_num, case_per_100000_people,\
 
 def insert_county_Cases(state_name, county_name, case_num, \
     case_per_100000_people, death_num, death_per_100000_people):
-    insert_state_Cases = '''
+    insert_county_Cases = '''
         INSERT OR REPLACE INTO countyCases
         VALUES (?, ?, ?, ?, ?, ?)
     '''
     data = [state_name, county_name, case_num, case_per_100000_people,\
      death_num, death_per_100000_people]
-    run_sql(insert_state_Cases, data = data)
+    run_sql(insert_county_Cases, data = data)
     return
 
 

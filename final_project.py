@@ -9,11 +9,13 @@ import json
 import secrets # file that contains your API key
 import sqlite3
 from db import insert_state_Cases, insert_county_Cases
+from db import insert_country_Cases
 from cache import make_url_request_using_cache
 import datetime
 import time
 import re
 from utils import clean_data
+from iso3166 import countries
 
 COVID19API_URL = "https://covidapi.info/api/v1/global/latest"
 NYTCOVID19_URL = "https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html"
@@ -26,8 +28,29 @@ def get_country_cases():
     today=str(datetime.date.today())
     params = {'date': today}
     response = make_url_request_using_cache(COVID19API_URL, params, "covid19api")
-    result = response[result]
-    return response
+    results = response["result"]
+    print(len(results))
+    for result in results:
+        for key in result:
+            data = result[key]
+            Confirmed = data["confirmed"]
+            Deaths = data["deaths"]
+            Recovered = data["recovered"]
+            if key == 'MSZ' or key == "DPS":
+                continue
+            elif key == "WBG":
+                country_id = key
+                country_name = "West Bank & Gaza"
+            else:
+                if key == "RKS":
+                    country_id = "XKX"
+                else:
+                    country_id = key
+                country = countries.get(country_id)
+                country_name = country.name
+            print(country_name)
+            insert_country_Cases(country_id, country_name, Confirmed, Deaths, Recovered)
+    return
 
 
 def get_state_name1(state_listing_li_tr):
@@ -160,8 +183,9 @@ def get_all_county_cases():
     return
 
 if __name__ == "__main__":
-    print(build_state_url_dict())
-    print(len(build_state_url_dict()))
+    # print(build_state_url_dict())
+    # print(len(build_state_url_dict()))
+    get_country_cases()
     state_dict = build_state_url_dict()
     get_state_cases()
     today=str(datetime.date.today())
