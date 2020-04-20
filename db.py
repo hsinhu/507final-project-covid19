@@ -66,5 +66,19 @@ def insert_county_Cases(state_name, county_name, case_num, \
     return
 
 
+def insert_Projection(State_Name, date_reported, allbed_mean, \
+    ICUbed_mean, InvVen_mean, deaths_mean_daily, totalDeath_mean,\
+        bedshortage_mean, icushortage_mean):
+
+    insert_projection = '''
+        INSERT OR REPLACE INTO stateProjection
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    '''
+    data = [State_Name, date_reported, allbed_mean, \
+    ICUbed_mean, InvVen_mean, deaths_mean_daily, totalDeath_mean,\
+        bedshortage_mean, icushortage_mean]
+    run_sql(insert_projection, data = data)
+    return
+
 if __name__ == "__main__":
     insert_state_Cases("New York", 242817, 1248, 13869, 71)

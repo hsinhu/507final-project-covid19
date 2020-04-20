@@ -9,13 +9,15 @@ import json
 import secrets # file that contains your API key
 import sqlite3
 from db import insert_state_Cases, insert_county_Cases
-from db import insert_country_Cases
+from db import insert_country_Cases, insert_Projection
 from cache import make_url_request_using_cache
 import datetime
 import time
 import re
-from utils import clean_data
+from utils import clean_data, all_US_state_name
 from iso3166 import countries
+import csv
+
 
 COVID19API_URL = "https://covidapi.info/api/v1/global/latest"
 NYTCOVID19_URL = "https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html"
@@ -23,6 +25,7 @@ YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/search"
 CACHE_FILE_NAME = 'cache.json'
 API_KEY = secrets.API_KEY
 DBNAME = 'covid19.db'
+CSV_Name = 'Hospitalization_all_locs.csv'
 
 def get_country_cases():
     print("Start to get county cases...")
@@ -188,13 +191,37 @@ def get_all_county_cases():
         get_county_cases_in_one_state(state_url, key, params)
     return
 
+
+def get_projection(CSV_Name):
+    file_contents = open(CSV_Name, 'r')
+    csv_reader = csv.reader(file_contents)
+    next(csv_reader)
+    for row in csv_reader:
+        State_Name = row[1]
+        if State_Name not in all_US_state_name:
+            continue
+        date_reported = row[2]
+        allbed_mean = row[3]
+        ICUbed_mean = row[6]
+        InvVen_mean = row[9]
+        deaths_mean_daily = row[12]
+        totalDeath_mean = row[21]
+        bedshortage_mean = row[24]
+        icushortage_mean = row[27]
+        insert_Projection(State_Name, date_reported, allbed_mean, \
+            ICUbed_mean, InvVen_mean, deaths_mean_daily, totalDeath_mean,\
+            bedshortage_mean, icushortage_mean)
+    return
+
 if __name__ == "__main__":
     # print(build_state_url_dict())
     # print(len(build_state_url_dict()))
 
-    get_country_cases()
-    print()
-    get_state_cases()
-    print()
-    get_all_county_cases()
+    # get_country_cases()
+    # print()
+    # get_state_cases()
+    # print()
+    # get_all_county_cases()
+
+    get_projection(CSV_Name)
 
