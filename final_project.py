@@ -25,11 +25,11 @@ API_KEY = secrets.API_KEY
 DBNAME = 'covid19.db'
 
 def get_country_cases():
+    print("Start to get county cases...")
     today=str(datetime.date.today())
     params = {'date': today}
     response = make_url_request_using_cache(COVID19API_URL, params, "covid19api")
     results = response["result"]
-    print(len(results))
     for result in results:
         for key in result:
             data = result[key]
@@ -48,8 +48,8 @@ def get_country_cases():
                     country_id = key
                 country = countries.get(country_id)
                 country_name = country.name
-            print(country_name)
             insert_country_Cases(country_id, country_name, Confirmed, Deaths, Recovered)
+    print("Finish county cases...")
     return
 
 
@@ -127,6 +127,7 @@ def build_state_url_dict():
 
 
 def get_state_cases():
+    print("Start get state cases in US...")
     today=str(datetime.date.today())
     params = {'date': today}
     response = make_url_request_using_cache(NYTCOVID19_URL, params, "nyt")
@@ -150,8 +151,12 @@ def get_state_cases():
         insert_state_Cases(state_name, case_num, case_per_100000_people,\
             death_num, death_per_100000_people)
 
+    print("Finish get state cases in US...")
+    return
+
 
 def get_county_cases_in_one_state(state_url, state_name, params):
+    print("Start county in " + state_name + "...")
     response = make_url_request_using_cache(state_url, params, "nyt-county")
     soup = BeautifulSoup(response, "html.parser")
     county_listing_parent = soup.find('tbody', class_='top-level')
@@ -164,10 +169,11 @@ def get_county_cases_in_one_state(state_url, state_name, params):
         case_per_100000_people = clean_data(data[2])
         death_num = clean_data(data[3])
         death_per_100000_people = clean_data(data[4])
-        print(state_name, county_name, case_num, case_per_100000_people,\
-            death_num, death_per_100000_people)
+        # print(state_name, county_name, case_num, case_per_100000_people,\
+        #     death_num, death_per_100000_people)
         insert_county_Cases(state_name, county_name, case_num, case_per_100000_people,\
             death_num, death_per_100000_people)
+    print("Finish county in " + state_name + "...")
     return
 
 def get_all_county_cases():
@@ -185,10 +191,10 @@ def get_all_county_cases():
 if __name__ == "__main__":
     # print(build_state_url_dict())
     # print(len(build_state_url_dict()))
+
     get_country_cases()
-    state_dict = build_state_url_dict()
+    print()
     get_state_cases()
-    today=str(datetime.date.today())
-    params = {'date': today}
+    print()
     get_all_county_cases()
 

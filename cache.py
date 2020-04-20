@@ -71,8 +71,7 @@ def construct_unique_key(baseurl, params):
 def make_url_request_using_cache(url, params, source):
     '''Check the cache for a saved result for this baseurl+params:values
     combo. If the result is found, return it. Otherwise send a new
-    request, save it, then return it. The response type is determined by
-    my_type.
+    request, save it, then return it.
 
     Parameters
     ----------
@@ -80,8 +79,6 @@ def make_url_request_using_cache(url, params, source):
         The URL for get request
     params: dict
         A dictionary of param:value pairs
-    my_type: string
-        The type of the get request response
 
     Returns
     -------

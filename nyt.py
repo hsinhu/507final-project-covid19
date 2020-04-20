@@ -46,7 +46,3 @@ def fetch_nyt(url, source):
     # element = elements[1]
     # element.click()
 
-
-
-if __name__ == "__main__":
-    get_state_cases()
