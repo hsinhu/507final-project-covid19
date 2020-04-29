@@ -3,36 +3,50 @@
 
 {% block content %}
 <div>
-<h1>This is the US Cases Page.</h1>
+    <h1 class = 'p-4 text-center'>COVID19 US Projections for {{state}}.</h1>
 </div>
-<div>
-    <form class="form-inline" method="get">
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="selection" id="inlineRadio1" value=1>
-            <label class="form-check-label" for="inlineRadio1">Confirmed</label>
+
+<div class="m-3 text-center">
+    <form class="text-center mx-auto" method="get">
+    <div class="form-row align-items-center">
+        <div class="col">
+        <select class="form-control text-center" id="states_selection" name="state">
+            {% for state in states %}
+            <option>{{state}}</option>
+            {% endfor %}
+        </select>
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="selection" id="inlineRadio2" value=2>
-            <label class="form-check-label" for="inlineRadio2">Confirmed Per Capita</label>
+        <div class="col-auto my-1">
+        <button type="submit" class="btn btn-primary">Submit</button>
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=3>
-            <label class="form-check-label" for="inlineRadio3">Deaths</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=4>
-            <label class="form-check-label" for="inlineRadio3">Deaths Per Capita</label>
-        </div>
-        <button type="submit" class="btn btn-primary mb-2">Submit</button>
+    </div>
     </form>
 </div>
-<div>
-    {% if graph %}
+
+<div class="jumbotron m-3">
+    <h2 class = 'p-3 text-center'>Hospital resource use</h2>
+    {% if graph_resource %}
     {% autoescape off %}
-    {{ graph }}
+    {{ graph_resource }}
     {% endautoescape %}
     {% endif %}
 </div>
 
+<div class="jumbotron m-3">
+    <h2 class = 'p-3 text-center'>Deaths per day</h2>
+    {% if graph_death_daily %}
+    {% autoescape off %}
+    {{ graph_death_daily }}
+    {% endautoescape %}
+    {% endif %}
+</div>
 
+<div class="jumbotron m-3">
+    <h2 class = 'p-3 text-center'>Total deaths</h2>
+    {% if graph_death_total %}
+    {% autoescape off %}
+    {{ graph_death_total }}
+    {% endautoescape %}
+    {% endif %}
+</div>
 {% endblock %}

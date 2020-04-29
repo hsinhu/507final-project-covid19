@@ -4,30 +4,31 @@
 {% block content %}
 <h1 class = 'p-4 text-center'>COVID19 US State Cases Today.</h1>
 
-<div class = 'mx-auto'>
-    <form class="text-center mx-auto" method="get">
-        <div class="form-row align-items-center">
-            <div class="col">
-                <input class="form-check-input" type="radio" name="selection" id="inlineRadio1" value=1>
-                <label class="form-check-label" for="inlineRadio1">Confirmed</label>
+<div class="jumbotron m-3">
+
+    <div class = 'm-2'>
+        <form class="text-center mx-auto" method="get">
+            <div class="form-row align-items-center">
+                <div class="col">
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio1" value=1>
+                    <label class="form-check-label" for="inlineRadio1">Confirmed</label>
+                </div>
+                <div class="col">
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio2" value=2>
+                    <label class="form-check-label" for="inlineRadio2">Confirmed Per Capita</label>
+                </div>
+                <div class="col">
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=3>
+                    <label class="form-check-label" for="inlineRadio3">Deaths</label>
+                </div>
+                <div class="col">
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=4>
+                    <label class="form-check-label" for="inlineRadio3">Deaths Per Capita</label>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Submit</button>
             </div>
-            <div class="col">
-                <input class="form-check-input" type="radio" name="selection" id="inlineRadio2" value=2>
-                <label class="form-check-label" for="inlineRadio2">Confirmed Per Capita</label>
-            </div>
-            <div class="col">
-                <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=3>
-                <label class="form-check-label" for="inlineRadio3">Deaths</label>
-            </div>
-            <div class="col">
-                <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=4>
-                <label class="form-check-label" for="inlineRadio3">Deaths Per Capita</label>
-            </div>
-            <button type="submit" class="btn btn-primary mb-2">Submit</button>
-        </div>
-    </form>
-</div>
-<div class = 'mx-auto align-items-center'>
+        </form>
+    </div>
     {% if graph %}
     {% autoescape off %}
     {{ graph }}

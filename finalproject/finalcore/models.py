@@ -34,12 +34,12 @@ class CountyCases(models.Model):
 class StateProjection(models.Model):
     State_Name = models.CharField(max_length=100, null=False)
     date_reported = models.DateField(null=False)
-    allbed_mean = models.IntegerField()
-    ICUbed_mean = models.IntegerField()
-    InvVen_mean = models.IntegerField()
-    deaths_mean_daily = models.IntegerField()
-    totalDeath_mean = models.IntegerField()
-    bedshortage_mean = models.IntegerField()
-    icushortage_mean = models.IntegerField()
+    allbed_mean = models.FloatField()
+    ICUbed_mean = models.FloatField()
+    InvVen_mean = models.FloatField()
+    deaths_mean_daily = models.FloatField()
+    totalDeath_mean = models.FloatField()
+    bedshortage_mean = models.FloatField()
+    icushortage_mean = models.FloatField()
 
 

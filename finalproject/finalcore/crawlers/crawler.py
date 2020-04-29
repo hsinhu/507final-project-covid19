@@ -24,7 +24,7 @@ COVID19API_URL = "https://covidapi.info/api/v1/global/latest"
 NYTCOVID19_URL = "https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html"
 
 DBNAME = 'covid19.db'
-CSV_Name = './Hospitalization_all_locs.csv'
+CSV_Name = 'Hospitalization_all_locs.csv'
 
 def get_country_cases():
     print("Start to get county cases...")
@@ -67,12 +67,7 @@ def get_country_cases():
 
 
 def get_state_name1(state_listing_li_tr):
-    # state_name_tag = state_listing_li_tr.find('td', class_=\
-    # 'text svelte-5vyzvh', recursive=False)
     state_name_tag = state_listing_li_tr.find('td', recursive=False)
-    # if not state_name_tag:
-    #     state_name_tag = state_listing_li_tr.find('td', class_=\
-    #     'text svelte-5vyzvh no-expand', recursive=False)
     state_name = state_name_tag.text.strip()
     name_list = re.split("[+|Â»]", state_name)
     clean_state_name = None
@@ -85,12 +80,7 @@ def get_state_name1(state_listing_li_tr):
 
 
 def get_state_name2(state_listing_li_tr):
-    # state_name_tag = state_listing_li_tr.find('td', class_=\
-    # 'text svelte-5vyzvh', recursive=False)
     state_name_tag = state_listing_li_tr.find('td', recursive=False)
-    # if not state_name_tag:
-    #     state_name_tag = state_listing_li_tr.find('td', class_=\
-    #     'text svelte-5vyzvh no-expand', recursive=False)
     state_name = state_name_tag.text.strip()
     name_list = re.split("[+|Â»]", state_name)
     clean_state_name = None
@@ -119,26 +109,16 @@ def build_state_url_dict():
     params = {'date': today}
     response, using_cache = make_url_request_using_cache(NYTCOVID19_URL, params, "nyt")
     state_dict = {}
-    # print(response)
     soup = BeautifulSoup(response, "html.parser")
-    # state_listing_parent = soup.find('table', class_=\
-    #     'svelte-1d7u5bz')
+
     state_listing_parent = soup.find('table')
     state_listing_lis = state_listing_parent.find_all('tbody', recursive=False)
     for state_listing_li in state_listing_lis:
-        ## extract every state's URL
-        # state_listing_li_tr = state_listing_li.find('tr', class_=\
-        # 'svelte-5vyzvh', recursive=False)
         state_listing_li_tr = state_listing_li.find('tr', recursive=False)
         state_name_tag, state_name = get_state_name1(state_listing_li_tr)
         if not state_name:
             continue
-        # state_link_tag = state_name_tag.find('a', class_=\
-        # 'svelte-5vyzvh has-plus', recursive=False)
         state_link_tag = state_name_tag.find('a', recursive=False)
-        # if not state_link_tag:
-        #     state_link_tag = state_name_tag.find('a', class_=\
-        #     'svelte-5vyzvh', recursive=False)
         if state_link_tag:
             state_details_url = state_link_tag['href']
             state_dict[state_name] = state_details_url
@@ -157,14 +137,10 @@ def get_state_cases():
 
     state_dict = {}
     soup = BeautifulSoup(response, "html.parser")
-    # state_listing_parent = soup.find('table', class_=\
-    #     'svelte-1d7u5bz')
     state_listing_parent = soup.find('table')
     state_listing_lis = state_listing_parent.find_all('tbody', recursive=False)
 
     for state_listing_li in state_listing_lis:
-        # state_listing_li_tr = state_listing_li.find('tr', class_=\
-        # 'svelte-5vyzvh', recursive=False)
         state_listing_li_tr = state_listing_li.find('tr', recursive=False)
         _, state_name = get_state_name2(state_listing_li_tr)
         data = state_listing_li_tr.find_all('td', recursive=False)
@@ -172,9 +148,6 @@ def get_state_cases():
         case_per_100000_people = clean_data(data[2])
         death_num = clean_data(data[3])
         death_per_100000_people = clean_data(data[4])
-        # print(state_name, case_num, case_per_100000_people,\
-        #     death_num, death_per_100000_people)
-
         state = us.states.lookup(state_name)
         if state:
             fips = state.fips
@@ -197,8 +170,6 @@ def get_state_cases():
         new_state, created = StateCases.objects.update_or_create(
                 State_Name=state_name, defaults = defaults
             )
-        # insert_state_Cases(state_name, case_num, case_per_100000_people,\
-        #     death_num, death_per_100000_people)
     print("Finish get state cases in US...")
     return
 
@@ -222,8 +193,6 @@ def get_county_cases_in_one_state(state_url, state_name, params):
         case_per_100000_people = clean_data(data[2])
         death_num = clean_data(data[3])
         death_per_100000_people = clean_data(data[4])
-        # if '’' in county_name:
-        #     county_name = county_name.replace('’', "'")
         fips = None
         if county_name == 'New York City':
             fips = af.get_county_fips('New York County', state=state_name)
@@ -233,8 +202,6 @@ def get_county_cases_in_one_state(state_url, state_name, params):
             fips = af.get_county_fips(county_name, state=state_name)
 
             print(state_name, county_name)
-        # print(state_name, county_name, case_num, case_per_100000_people,\
-        #     death_num, death_per_100000_people)
         defaults = {'Confirmed': case_num,
                     'Deaths': death_num,
                     'Confirmed_Per_100000_People': case_per_100000_people,
@@ -247,9 +214,6 @@ def get_county_cases_in_one_state(state_url, state_name, params):
                 State_Name=state, County_name = county_name,
                 County_fips = fips, defaults = defaults
             )
-
-        # insert_county_Cases(state_name, county_name, case_num, case_per_100000_people,\
-        #     death_num, death_per_100000_people)
     print("Finish county in " + state_name + "...")
     return
 
@@ -273,20 +237,24 @@ def get_projection():
     if StateProjection.objects.exists():
         return
     file_contents = open(CSV_Name, 'r')
+    if file_contents:
+        print("can read")
     csv_reader = csv.reader(file_contents)
     next(csv_reader)
     for row in csv_reader:
         State_Name = row[1]
+        # print(all_US_state_name)
+        print(State_Name)
         if State_Name not in all_US_state_name:
             continue
-        date_reported = row[2]
-        allbed_mean = row[3]
-        ICUbed_mean = row[6]
-        InvVen_mean = row[9]
-        deaths_mean_daily = row[12]
-        totalDeath_mean = row[21]
-        bedshortage_mean = row[24]
-        icushortage_mean = row[27]
+        date_reported = row[3]
+        allbed_mean = row[4]
+        ICUbed_mean = row[7]
+        InvVen_mean = row[10]
+        deaths_mean_daily = row[13]
+        totalDeath_mean = row[22]
+        bedshortage_mean = row[25]
+        icushortage_mean = row[28]
 
         defaults = {'allbed_mean': allbed_mean,
             'ICUbed_mean': ICUbed_mean,
@@ -295,14 +263,11 @@ def get_projection():
             'totalDeath_mean': totalDeath_mean,
             'bedshortage_mean': bedshortage_mean,
             'icushortage_mean': icushortage_mean}
-
         new_projection, created = StateProjection.objects.update_or_create(
                 State_Name=State_Name, date_reported = date_reported,\
                      defaults = defaults
             )
-        # insert_Projection(State_Name, date_reported, allbed_mean, \
-        #     ICUbed_mean, InvVen_mean, deaths_mean_daily, totalDeath_mean,\
-        #     bedshortage_mean, icushortage_mean)
+
     return
 
 if __name__ == "__main__":

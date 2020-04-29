@@ -1,17 +1,44 @@
 {% extends "base_bootstrap.html" %}
-
-{% block content %}
 {% load static %}
-<h1>Welcome to COVID19 Visualization Website</h1>
-<p>You can select the following links to explore.</p>
-<ol>
-<li>
-<a href="{% url 'finalcore:word_case' %}">World Cases</a>
-<li>
-<a href="{% url 'finalcore:us_state' %}">US State Cases</a>
+{% block content %}
+<div class="jumbotron m-3">
+    <h1 class = 'p-4 text-center'>Welcome to Xin Hu's COVID19 Visualization Website</h1>
 
-<li>
-<a href="{% url 'finalcore:us_county' %}">US County Cases</a>
-</li>
-</ol>
+    <h3 class = "p-4 text-center">There are 4 visualization options for this website. </h3>
+
+    <div class="card-deck">
+        <div class="card text-center">
+        <img class="card-img-top img-fluid border-bottom" src="{% static 'img/world_cases.png' %}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">World Cases</h5>
+            <p class="card-text">
+                This page shows today's world map of COVID19.
+                User can select confirmed cases, deaths and active cases.
+                The color for each country will be different corresponding to their cases.</p>
+            <a href="{% url 'finalcore:word_case' %}" class="btn btn-info">Explore!</a>
+        </div>
+        </div>
+        <div class="card text-center">
+        <img class="card-img-top img-fluid border-bottom" src="{% static 'img/us_cases.png' %}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">US State Cases</h5>
+            <p class="card-text">
+                This page shows today's US map of COVID19.
+                User can select confirmed cases, deaths and per capita confirmed cases and per capita death cases.
+                The color for each state will also be different corresponding to their cases.</p>
+            <a href="{% url 'finalcore:us_state' %}" class="btn btn-info">Explore!</a>
+        </div>
+        </div>
+        <div class="card text-center">
+        <img class="card-img-top img-fluid border-bottom" src="{% static 'img/us_projection.png' %}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">US Projection</h5>
+            <p class="card-text">This page shows projected daily needed medical resources, daily death number and total death number
+                from covid19 start to future for selected state by users. The default is the whole US.
+            </p>
+            <a href="{% url 'finalcore:us_projection' %}" class="btn btn-info">Explore!</a>
+        </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

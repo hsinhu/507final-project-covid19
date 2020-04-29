@@ -18,8 +18,9 @@ from datetime import datetime
 import plotly.express as px
 from urllib.request import urlopen
 import json
-import plotly.figure_factory as ff
+# import plotly.figure_factory as ff
 import pandas as pd
+from .crawlers.utils import all_US_state_name
 
 # Create your views here.
 class WorldCasesView(View):
@@ -59,8 +60,8 @@ class WorldCasesView(View):
                             hover_name= "Country_Name",
                             # color_continuous_scale= color_range,
                             color_continuous_scale=color_range,
-                            width = 900,
-                            height = 600
+                            # width = 900,
+                            # height = 600
                             )
 
         fig.update_layout(title_text=title_text, title_x=0.5)
@@ -125,8 +126,8 @@ class USStateView(View):
                             scope = 'usa',
                             locationmode = 'USA-states',
                             color_continuous_scale= color_range,  #  color scale red, yellow green
-                            width = 900,
-                            height = 600
+                            # width = 900,
+                            # height = 600
                             )
         context = {}
         fig.update_layout(title_text=title_text, title_x=0.5)
@@ -200,8 +201,8 @@ class USCountyView(View):
                             scope = 'usa',
                             # locationmode = 'USA-states',
                             color_continuous_scale= color_range,  #  color scale red, yellow green
-                            width = 1000,
-                            height = 700
+                            # width = 1000,
+                            # height = 700
                             )
 
         context = {}
@@ -213,50 +214,99 @@ class USCountyView(View):
         return render(request, 'finalcore/us_county.html', context)
 
 
-# class USProjection(View):
-#     def get(self, request):
-#         # print(build_state_url_dict())
-#         get_projection()
-#         data = StateProjection.objects.all()
-#         today = datetime.now().strftime('%Y-%m-%d')
-#         data_frame = {'State_Name': [],
-#                       'date_reported':[],
-#                       'allbed_mean':[],
-#                       'ICUbed_mean': [],
-#                       'InvVen_mean': [],
-#                       'deaths_mean_daily': [],
-#                       'totalDeath_mean': [],
-#                       'bedshortage_mean': [],
-#                       'icushortage_mean':[]
-#                       }
+class USProjection(View):
+    def get(self, request):
+        # print(build_state_url_dict())
+        context = {}
+        context['states'] = all_US_state_name
+        state = request.GET.get('state')
+        if not state:
+            state = 'United States of America'
+        get_projection()
+        data = StateProjection.objects.filter(State_Name=state)
 
-#         for county in data:
-#             data_frame['State_Name'].append(county.State_Name)
-#             data_frame['date_reported'].append(county.date_reported)
-#             data_frame['allbed_mean'].append(county.allbed_mean)
-#             data_frame['ICUbed_mean'].append(county.ICUbed_mean)
-#             data_frame['InvVen_mean'].append(county.InvVen_mean)
-#             data_frame['deaths_mean_daily'].append(county.deaths_mean_daily)
-#             data_frame['totalDeath_mean'].append(county.totalDeath_mean)
-#             data_frame['bedshortage_mean'].append(county.bedshortage_mean)
-#             data_frame['icushortage_mean'].append(county.icushortage_mean)
-#         # traces = []
-#         # traces.append((go.Scatter(x=data_frame['date_reported'], \
-#         #     y=data_frame['allbed_mean'], name='All beds for COVID19')))
-#         # fig = px.choropleth(data_frame = data_frame,
-#         #                     locations= "County_fips",
-#         #                     color= color_Select,  # value in column 'Confirmed' determines color
-#         #                     hover_name= "State_Name",
-#         #                     scope = 'usa',
-#         #                     # locationmode = 'USA-states',
-#         #                     color_continuous_scale= color_range,  #  color scale red, yellow green
-#         #                     width = 900,
-#         #                     height = 700
-#         #                     )
-#         context = {}
-#         # fig.update_layout(title_text=title_text)
+        # data = data.values('State_Name', 'date_reported', 'allbed_mean', 'ICUbed_mean',\
+        #     'InvVen_mean', 'deaths_mean_daily', 'totalDeath_mean', 'bedshortage_mean', \
+        #         'icushortage_mean').order_by('date')
+        # print(data)
+        # traces = []
+        # today = datetime.now().strftime('%Y-%m-%d')
+        data_frame = {'State_Name': [],
+                      'date_reported':[],
+                      'allbed_mean':[],
+                      'ICUbed_mean': [],
+                      'InvVen_mean': [],
+                      'deaths_mean_daily': [],
+                      'totalDeath_mean': [],
+                      'bedshortage_mean': [],
+                      'icushortage_mean':[]
+                      }
 
-#         # div = plot(go.Data(traces), output_type='div')
-#         # context['graph'] = div
+        for county in data:
+            data_frame['date_reported'].append(county.date_reported)
+            data_frame['allbed_mean'].append(county.allbed_mean)
+            data_frame['ICUbed_mean'].append(county.ICUbed_mean)
+            data_frame['InvVen_mean'].append(county.InvVen_mean)
+            data_frame['deaths_mean_daily'].append(county.deaths_mean_daily)
+            data_frame['totalDeath_mean'].append(county.totalDeath_mean)
+            data_frame['bedshortage_mean'].append(county.bedshortage_mean)
+            data_frame['icushortage_mean'].append(county.icushortage_mean)
 
-#         return render(request, 'finalcore/us_projection.html', context)
+        # for medical resource
+        trace1 = go.Scatter(x=data_frame['date_reported'],
+                            y=data_frame['allbed_mean'],
+                            line = {'dash':'dot'},
+                            name="All beds needed")
+        trace2 = go.Scatter(x=data_frame['date_reported'],
+                            y=data_frame['ICUbed_mean'],
+                            line = {'dash':'dot'},
+                            name="ICU beds needed")
+        trace3 = go.Scatter(x=data_frame['date_reported'],
+                            y=data_frame['InvVen_mean'],
+                            line = {'dash':'dot'},
+                            name="Invasive Ventilation Needed")
+        basic_layout = go.Layout(title = 'Medical Resources Needed for '+state,
+              xaxis = dict(title = 'Date'), # 横轴坐标
+              yaxis = dict(title = 'Resource count'), # 总轴坐标
+              title_x=0.5,
+            #   height = 600
+            )
+        data = [trace1, trace2, trace3]
+        fig = go.Figure(data=data, layout = basic_layout)
+        div = plot(fig, output_type='div')
+
+        context['graph_resource'] = div
+        context['state'] = state
+
+        # for death rate
+        trace = go.Scatter(x=data_frame['date_reported'],
+                            y=data_frame['deaths_mean_daily'],
+                            line = {'color':'red'})
+
+        basic_layout = go.Layout(title = 'Deaths per day for '+state,
+              xaxis = dict(title = 'Date'), # 横轴坐标
+              yaxis = dict(title = 'Deaths per day'), # 总轴坐标
+              title_x=0.5,
+            #   height = 600
+            )
+        fig = go.Figure(data=trace, layout = basic_layout)
+        div = plot(fig, output_type='div')
+
+        context['graph_death_daily'] = div
+
+        # for Total Death
+        trace = go.Scatter(x=data_frame['date_reported'],
+                            y=data_frame['totalDeath_mean'])
+
+        basic_layout = go.Layout(title = 'Total deaths for '+state,
+              xaxis = dict(title = 'Date'), # 横轴坐标
+              yaxis = dict(title = 'Total Deaths'), # 总轴坐标
+              title_x=0.5,
+            #   height = 600
+            )
+        fig = go.Figure(data=trace, layout = basic_layout)
+        div = plot(fig, output_type='div')
+
+        context['graph_death_total'] = div
+
+        return render(request, 'finalcore/us_projection.html', context)
