@@ -37,12 +37,14 @@ class WorldCasesView(View):
         # color_range = px.colors.sequential.reds
         title_text=f'World COVID-19 Confirmed Cases for {today}'
 
-        if plot_select == 'deaths':
+        context = {}
+        context["select"] = plot_select
+        if plot_select == '2':
             color_Select = "Deaths"
             color_range = px.colors.sequential.Greys
             title_text=f'World COVID-19 Death Cases for {today}'
 
-        if plot_select == 'recovered':
+        if plot_select == '3':
             color_Select = "Recovered"
             color_range = px.colors.sequential.Teal
             title_text=f'World COVID-19 Recovered Cases for {today}'
@@ -65,7 +67,6 @@ class WorldCasesView(View):
                             )
 
         fig.update_layout(title_text=title_text, title_x=0.5)
-        context = {}
         div = plot(fig, output_type='div')
         context['graph'] = div
 
@@ -86,7 +87,9 @@ class USStateView(View):
                       'Deaths_per_capita': []}
 
         plot_select = request.GET.get('selection')
-        print(plot_select)
+        # print(plot_select)
+        context = {}
+        context["select"] = plot_select
         color_Select = "Confirmed"
         color_range = px.colors.sequential.Reds
         # color_range = px.colors.sequential.reds
@@ -129,7 +132,7 @@ class USStateView(View):
                             # width = 900,
                             # height = 600
                             )
-        context = {}
+
         fig.update_layout(title_text=title_text, title_x=0.5)
 
         div = plot(fig, output_type='div')

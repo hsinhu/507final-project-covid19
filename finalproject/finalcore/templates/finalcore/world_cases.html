@@ -9,15 +9,27 @@
         <form class="text-center mx-auto" method="get">
             <div class="form-row align-items-center">
                 <div class="col">
-                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio1" value="confirmed">
+                    {% if not select or select == '1'%}
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio1" value=1 checked>
+                    {% else %}
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio1" value=1>
+                    {% endif %}
                     <label class="form-check-label" for="inlineRadio1">Confirmed</label>
                 </div>
                 <div class="col">
-                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio2" value="deaths">
+                    {% if select == '2'%}
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio2" value=2 checked>
+                    {% else %}
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio2" value=2>
+                    {% endif %}
                     <label class="form-check-label" for="inlineRadio2">Deaths</label>
                 </div>
                 <div class="col">
-                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value="recovered">
+                    {% if select == '3'%}
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=3 checked>
+                    {% else %}
+                    <input class="form-check-input" type="radio" name="selection" id="inlineRadio3" value=3>
+                    {% endif %}
                     <label class="form-check-label" for="inlineRadio3">Recovered</label>
                 </div>
                 <button type="submit" class="btn btn-primary mb-2">Submit</button>
