@@ -57,13 +57,14 @@ def get_country_cases():
 
 
 def get_state_name1(state_listing_li_tr):
-    state_name_tag = state_listing_li_tr.find('td', class_=\
-    'text svelte-5vyzvh', recursive=False)
-    if not state_name_tag:
-        state_name_tag = state_listing_li_tr.find('td', class_=\
-        'text svelte-5vyzvh no-expand', recursive=False)
+    # state_name_tag = state_listing_li_tr.find('td', class_=\
+    # 'text svelte-5vyzvh', recursive=False)
+    state_name_tag = state_listing_li_tr.find('td', recursive=False)
+    # if not state_name_tag:
+    #     state_name_tag = state_listing_li_tr.find('td', class_=\
+    #     'text svelte-5vyzvh no-expand', recursive=False)
     state_name = state_name_tag.text.strip()
-    name_list = re.split("[+|»]", state_name)
+    name_list = re.split("[+|Â»]", state_name)
     clean_state_name = None
     for name in name_list:
         if name and "+" in state_name:
@@ -71,6 +72,7 @@ def get_state_name1(state_listing_li_tr):
             if "MAP" in name:
                 clean_state_name = clean_state_name[:-4]
     return state_name_tag, clean_state_name
+
 
 
 def get_state_name2(state_listing_li_tr):
@@ -90,6 +92,7 @@ def get_state_name2(state_listing_li_tr):
     return state_name_tag, clean_state_name
 
 
+
 def build_state_url_dict():
     ''' Make a dictionary that maps state name to state page url
     from New York Times
@@ -107,27 +110,30 @@ def build_state_url_dict():
     params = {'date': today}
     response = make_url_request_using_cache(NYTCOVID19_URL, params, "nyt")
     state_dict = {}
+    print(response)
     soup = BeautifulSoup(response, "html.parser")
-    state_listing_parent = soup.find('table', class_=\
-        'svelte-1d7u5bz')
+    # state_listing_parent = soup.find('table', class_=\
+    #     'svelte-1d7u5bz')
+    state_listing_parent = soup.find('table')
     state_listing_lis = state_listing_parent.find_all('tbody', recursive=False)
     for state_listing_li in state_listing_lis:
         ## extract every state's URL
-        state_listing_li_tr = state_listing_li.find('tr', class_=\
-        'svelte-5vyzvh', recursive=False)
+        # state_listing_li_tr = state_listing_li.find('tr', class_=\
+        # 'svelte-5vyzvh', recursive=False)
+        state_listing_li_tr = state_listing_li.find('tr', recursive=False)
         state_name_tag, state_name = get_state_name1(state_listing_li_tr)
         if not state_name:
             continue
-        state_link_tag = state_name_tag.find('a', class_=\
-        'svelte-5vyzvh has-plus', recursive=False)
-        if not state_link_tag:
-            state_link_tag = state_name_tag.find('a', class_=\
-            'svelte-5vyzvh', recursive=False)
+        # state_link_tag = state_name_tag.find('a', class_=\
+        # 'svelte-5vyzvh has-plus', recursive=False)
+        state_link_tag = state_name_tag.find('a', recursive=False)
+        # if not state_link_tag:
+        #     state_link_tag = state_name_tag.find('a', class_=\
+        #     'svelte-5vyzvh', recursive=False)
         if state_link_tag:
             state_details_url = state_link_tag['href']
             state_dict[state_name] = state_details_url
     return state_dict
-
 
 def get_state_cases():
     print("Start get state cases in US...")
@@ -214,7 +220,7 @@ def get_projection(CSV_Name):
     return
 
 if __name__ == "__main__":
-    # print(build_state_url_dict())
+    print(build_state_url_dict())
     # print(len(build_state_url_dict()))
 
     # get_country_cases()
@@ -223,5 +229,5 @@ if __name__ == "__main__":
     # print()
     # get_all_county_cases()
 
-    get_projection(CSV_Name)
+    # get_projection(CSV_Name)
 

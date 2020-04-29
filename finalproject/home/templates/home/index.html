@@ -1,0 +1,17 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+{% load static %}
+<h1>Welcome to COVID19 Visualization Website</h1>
+<p>You can select the following links to explore.</p>
+<ol>
+<li>
+<a href="{% url 'finalcore:word_case' %}">World Cases</a>
+<li>
+<a href="{% url 'finalcore:us_state' %}">US State Cases</a>
+
+<li>
+<a href="{% url 'finalcore:us_county' %}">US County Cases</a>
+</li>
+</ol>
+{% endblock %}

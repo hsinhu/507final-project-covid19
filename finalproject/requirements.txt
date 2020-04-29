@@ -1,0 +1,26 @@
+# To activate this run
+#
+# pip install -r requirements.txt   (or pip3)
+#
+Django==3.0.5
+django-crispy-forms==1.9.0
+django-extensions==2.2.8
+
+requests==2.23.0
+beautifulsoup4==4.8.2
+bs4==0.0.1
+selenium==3.141.0
+webdriver-manager==2.3.0
+iso3166==1.0.1
+
+plotly==4.6.0
+
+pandas==1.0.3
+
+us==2.0.1
+addfips==0.2.2
+
+plotly-geo==1.0.0
+geopandas==0.3.0
+pyshp==1.2.10
+shapely==1.6.3
