@@ -7,7 +7,7 @@
     <h3 class = "p-4 text-center">There are 4 visualization options for this website. </h3>
 
     <div class="card-deck">
-        <div class="card text-center">
+        <div class="card text-center ">
         <img class="card-img-top img-fluid border-bottom" src="{% static 'img/world_cases.png' %}" alt="Card image cap">
         <div class="card-body">
             <h5 class="card-title">World Cases</h5>
@@ -27,6 +27,20 @@
                 User can select confirmed cases, deaths and per capita confirmed cases and per capita death cases.
                 The color for each state will also be different corresponding to their cases.</p>
             <a href="{% url 'finalcore:us_state' %}" class="btn btn-info">Explore!</a>
+        </div>
+        </div>
+    </div>
+    <div class="card-deck">
+        <div class="card text-center">
+            <img class="card-img-top img-fluid border-bottom" src="{% static 'img/us_county.png' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">US County Cases</h5>
+                <p class="card-text">
+                    This page shows today's US county bar plot in selected state in descending order from left to right.
+                    User can select state name, what property to show (including confirmed cases, deaths and
+                    per capita confirmed cases and per capita death case) and the num to show (including all, top 5, top 10).
+                </p>
+                <a href="{% url 'finalcore:us_county' %}" class="btn btn-info">Explore!</a>
         </div>
         </div>
         <div class="card text-center">

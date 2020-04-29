@@ -178,14 +178,11 @@ def get_county_cases_in_one_state(state_url, state_name, params):
     print("Start county in " + state_name + "...")
     response, using_cache = make_url_request_using_cache(state_url, params,\
          "nyt-county")
-
-    if using_cache and CountyCases.objects.filter(stateCases__State_Name=state_name):
+    if using_cache and CountyCases.objects.filter(State_Name=state_name):
         return
-
     soup = BeautifulSoup(response, "html.parser")
     county_listing_parent = soup.find('tbody', class_='top-level')
     county_listing_lis = county_listing_parent.find_all('tr', recursive=False)
-    af = addfips.AddFIPS()
     for county_listing_li in county_listing_lis[1:]:
         data = county_listing_li.find_all('td', recursive=False)
         county_name = clean_data(data[0])
@@ -193,15 +190,6 @@ def get_county_cases_in_one_state(state_url, state_name, params):
         case_per_100000_people = clean_data(data[2])
         death_num = clean_data(data[3])
         death_per_100000_people = clean_data(data[4])
-        fips = None
-        if county_name == 'New York City':
-            fips = af.get_county_fips('New York County', state=state_name)
-        elif county_name == 'LaSalle' and state_name == 'Louisiana':
-            fips = af.get_county_fips('La Salle Parish', state=state_name)
-        else:
-            fips = af.get_county_fips(county_name, state=state_name)
-
-            print(state_name, county_name)
         defaults = {'Confirmed': case_num,
                     'Deaths': death_num,
                     'Confirmed_Per_100000_People': case_per_100000_people,
@@ -211,8 +199,7 @@ def get_county_cases_in_one_state(state_url, state_name, params):
             get_state_cases()
             state = StateCases.objects.filter(State_Name=state_name).first()
         new_county, created = CountyCases.objects.update_or_create(
-                State_Name=state, County_name = county_name,
-                County_fips = fips, defaults = defaults
+                State_Name=state, County_name = county_name, defaults = defaults
             )
     print("Finish county in " + state_name + "...")
     return
@@ -220,13 +207,7 @@ def get_county_cases_in_one_state(state_url, state_name, params):
 def get_all_county_cases():
     today=str(datetime.date.today())
     params = {'date': today}
-
     state_dict = build_state_url_dict()
-    today=str(datetime.date.today())
-    params = {'date': today}
-    response, using_cache = make_url_request_using_cache(NYTCOVID19_URL,\
-         params, "nyt")
-
     for key in state_dict:
         state_url = state_dict[key]
         get_county_cases_in_one_state(state_url, key, params)
@@ -244,7 +225,7 @@ def get_projection():
     for row in csv_reader:
         State_Name = row[1]
         # print(all_US_state_name)
-        print(State_Name)
+        # print(State_Name)
         if State_Name not in all_US_state_name:
             continue
         date_reported = row[3]

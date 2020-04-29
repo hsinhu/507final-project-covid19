@@ -4,6 +4,8 @@ def clean_data(data):
         data = 0
     elif ',' in data:
         data = data.replace(',','')
+    elif data == "<1":
+        data = 0
     return data
 
 

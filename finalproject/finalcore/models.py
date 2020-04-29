@@ -15,21 +15,18 @@ class StateCases(models.Model):
     State_fips = models.IntegerField(null=False)
     State_abbr = models.CharField(max_length=3, null=False)
     Confirmed = models.IntegerField()
-    Confirmed_Per_100000_People = models.CharField(max_length=20)
+    Confirmed_Per_100000_People = models.IntegerField()
     Deaths = models.IntegerField()
-    Deaths_Per_100000_People = models.CharField(max_length=20)
-
+    Deaths_Per_100000_People = models.IntegerField()
 
 class CountyCases(models.Model):
     State_Name = models.ForeignKey('StateCases', null=False,
                                 on_delete=models.CASCADE)
-    County_fips = models.IntegerField()
     County_name = models.CharField(max_length=100, null=False)
     Confirmed = models.IntegerField()
-    Confirmed_Per_100000_People = models.CharField(max_length=20)
+    Confirmed_Per_100000_People = models.IntegerField()
     Deaths = models.IntegerField()
-    Deaths_Per_100000_People = models.CharField(max_length=20)
-
+    Deaths_Per_100000_People = models.IntegerField()
 
 class StateProjection(models.Model):
     State_Name = models.CharField(max_length=100, null=False)
