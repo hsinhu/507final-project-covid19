@@ -2,4 +2,5 @@
 __pycache__
 secrets.py
 *.sqlite3
+0001_initial.py
 
