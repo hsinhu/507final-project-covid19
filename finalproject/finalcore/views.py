@@ -216,7 +216,6 @@ class USCountyView(View):
 
 class USProjection(View):
     def get(self, request):
-        # print(build_state_url_dict())
         context = {}
         context['states'] = all_US_state_name
         state = request.GET.get('state')
@@ -224,13 +223,6 @@ class USProjection(View):
             state = 'United States of America'
         get_projection()
         data = StateProjection.objects.filter(State_Name=state)
-
-        # data = data.values('State_Name', 'date_reported', 'allbed_mean', 'ICUbed_mean',\
-        #     'InvVen_mean', 'deaths_mean_daily', 'totalDeath_mean', 'bedshortage_mean', \
-        #         'icushortage_mean').order_by('date')
-        # print(data)
-        # traces = []
-        # today = datetime.now().strftime('%Y-%m-%d')
         data_frame = {'State_Name': [],
                       'date_reported':[],
                       'allbed_mean':[],
@@ -276,6 +268,28 @@ class USProjection(View):
         div = plot(fig, output_type='div')
 
         context['graph_resource'] = div
+        context['state'] = state
+
+        # for medical resource shortage
+        trace1 = go.Scatter(x=data_frame['date_reported'],
+                            y=data_frame['bedshortage_mean'],
+                            line = {'dash':'dot'},
+                            name="All beds shortage")
+        trace2 = go.Scatter(x=data_frame['date_reported'],
+                            y=data_frame['icushortage_mean'],
+                            line = {'dash':'dot'},
+                            name="ICU beds shortage")
+        basic_layout = go.Layout(title = 'Medical Resources shortage for '+state,
+              xaxis = dict(title = 'Date'), # 横轴坐标
+              yaxis = dict(title = 'Resource count'), # 总轴坐标
+              title_x=0.5,
+            #   height = 600
+            )
+        data = [trace1, trace2]
+        fig = go.Figure(data=data, layout = basic_layout)
+        div = plot(fig, output_type='div')
+
+        context['graph_resource_shortage'] = div
         context['state'] = state
 
         # for death rate

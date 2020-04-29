@@ -30,6 +30,12 @@
     {{ graph_resource }}
     {% endautoescape %}
     {% endif %}
+
+    {% if graph_resource %}
+    {% autoescape off %}
+    {{ graph_resource_shortage }}
+    {% endautoescape %}
+    {% endif %}
 </div>
 
 <div class="jumbotron m-3">
